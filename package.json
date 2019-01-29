@@ -1,0 +1,38 @@
+{
+    "name": "nyoom-cli",
+    "version": "1.0.0",
+    "description": "CLI for Nyoom API",
+    "main": "index.js",
+    "scripts": {
+        "start": "node nyoom.js"
+    },
+    "bin": {
+        "nyoom": "./nyoom.js"
+    },
+    "author": "Pawel Maskowicz",
+    "license": "ISC",
+    "dependencies": {
+        "@types/shelljs": "^0.8.2",
+        "better-queue": "^3.8.10",
+        "chalk": "^2.4.1",
+        "commander": "^2.19.0",
+        "figlet": "^1.2.1",
+        "inquirer": "^6.2.0",
+        "js-yaml": "^3.12.1",
+        "mkdirp": "^0.5.1",
+        "recursive-readdir": "^2.2.2",
+        "shelljs": "^0.8.3",
+        "unirest": "^0.5.1"
+    },
+    "pkg": {
+        "scripts": [
+            "api/**/*.js",
+            "core/**/*.js",
+            "mutate/**/*.js",
+            "*.js"
+        ]
+    },
+    "devDependencies": {
+        "@types/js-yaml": "^3.12.0"
+    }
+}

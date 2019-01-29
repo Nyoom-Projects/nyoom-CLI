@@ -1,0 +1,8 @@
+project:
+    name: nyoom-cli
+    group: nyoom
+tasks:
+    pull:
+        -
+            type: SHELL
+            command: git pull

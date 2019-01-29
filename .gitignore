@@ -1,0 +1,7 @@
+node_modules/
+mongodb/
+.idea/
+*.iml
+nyoom-cli-linux
+nyoom-cli-macos
+nyoom-cli-win.exe
