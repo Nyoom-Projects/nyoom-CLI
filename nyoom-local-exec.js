@@ -6,7 +6,7 @@ const {getProjectFromFileSystem} = require('./project');
 const Queue = require('better-queue');
 
 
-var queue = new Queue((command, cb) => {
+let queue = new Queue((command, cb) => {
     (async() => {
         switch (command.type) {
             case 'SHELL':
