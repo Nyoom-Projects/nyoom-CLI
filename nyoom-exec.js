@@ -21,27 +21,43 @@ if (projectParameters.length === 0) {
 logUpdate('Queueing tasks...');
 
 taskCore.queue(projectParameters, taskParameters)
-.then(commands => {
-    const tasks = commands.map(item => {
-        return {
-            title: `${item.id}\t ${item.type}\t ${item.command}`,
-            task: () => {
-                return new Observable(observer => {
-                    observer.next('QUEUED');
-                    updateCommandResult(observer, item.id)
-                    .then(() => {})
-                    .catch((err) => {
-                        observer.error(err);
+.then(commandGroups => {
+    const taskGroup = commandGroups.map(group => {
+        const tasks = group.commands.map(item => {
+            return {
+                title: `${item.id}\t ${item.type}\t ${item.command}`,
+                task: () => {
+                    return new Observable(observer => {
+                        observer.next('QUEUED');
+                        updateCommandResult(observer, item.id)
+                        .then(() => {})
+                        .catch((err) => {
+                            observer.error(err);
+                        });
                     });
+                }
+            };
+        });
+
+        return {
+            title: `${group.project.name}`,
+            task: () => {
+                return new Listr(tasks, {
+                    concurrent: false,
+                    collapse: false,
                 });
             }
         };
     });
 
 
-    const listr = new Listr(tasks, {concurrent: false});
+    const listr = new Listr(taskGroup, {
+        concurrent: true,
+        collapse: false,
+        exitOnError: false,
+    });
     listr.run().catch(err => {
-        console.error('ERROR:', err.message || err);
+        // console.error('ERROR:', err.message || err);
     });
 });
 
@@ -64,8 +80,13 @@ const updateCommandResult = (observer, itemID) => {
 
                 return false;
             } else {
-
-                let message = `Exit code: ${result.exitCode}`;
+                let message = '';
+                if (result.message !== undefined) {
+                    message += `${result.message}`;
+                }
+                if (result.exitCode !== undefined) {
+                    message += `\nExit code: ${result.exitCode}`;
+                }
                 if (result.stdout) {
                     message += `\nstdout: ${result.stdout}`;
                 }
@@ -73,7 +94,7 @@ const updateCommandResult = (observer, itemID) => {
                     message += `\nstderr: ${result.stderr}`;
                 }
                 throw {
-                    message,
+                    message: message.trim(),
                     result,
                 };
             }
