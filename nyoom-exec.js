@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 const taskCore = require('./core/task/taskCore');
 const logUpdate = require('log-update');
-const execa = require('execa');
 const Listr = require('listr');
 const {Observable} = require('rxjs');
 
@@ -10,12 +9,14 @@ const {Observable} = require('rxjs');
 const projectParameters = process.argv.slice(2).filter(param => param.indexOf(':') !== 0 && param.indexOf('^') !== 0);
 const taskParameters = process.argv.slice(2).filter(param => param.indexOf(':') === 0 || param.indexOf('^') === 0);
 
-if (projectParameters.length === 0) {
-    projectParameters.push('.');
-}
-// console.log('projectParameters', projectParameters);
-// console.log('taskParameters', taskParameters);
 
+if (projectParameters.length === 0) {
+    console.error('At least one Project is required');
+    process.exit(1);
+} else if (taskParameters.length === 0) {
+    console.error('At least one Task is required');
+    process.exit(1);
+}
 
 logUpdate('Queueing tasks...');
 
@@ -56,8 +57,6 @@ const scheduleUpdateCommandResult = (observer, itemID) => setTimeout(() => {
 const updateCommandResult = (observer, itemID) => {
     return taskCore.getCommandResult(itemID)
     .then(async result => {
-        commandResults[itemID] = result;
-
         if (result) {
             if (result.exitCode === 0) {
                 observer.next('SUCCESS');

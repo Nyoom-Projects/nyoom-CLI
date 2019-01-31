@@ -17,7 +17,7 @@ module.exports = async (project, taskItem) => {
 		};
 	} else {
 		throw {
-			message: `Task '${taskItem.name}' does not exist in '${project.project.name}'`,
+			message: `Task '${taskItem.name}' does not exist in '${project.name}'`,
 		};
 	}
 };
